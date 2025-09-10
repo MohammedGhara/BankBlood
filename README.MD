@@ -40,3 +40,9 @@ npm run dev
 - Never commit `.env` or `*.sqlite` to GitHub.
 - Set environment variables on your hosting (Render/Heroku/Vercel/Netlify).
 - Use a persistent database (e.g., PostgreSQL) for production.
+## env
+-   DB_DIALECT=sqlite
+-   DB_STORAGE=./bloodbank.sqlite
+-   PORT=3000
+-   JWT_SECRET=supersecret_change_me
+
