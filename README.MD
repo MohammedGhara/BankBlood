@@ -45,4 +45,11 @@ npm run dev
 -   DB_STORAGE=./bloodbank.sqlite
 -   PORT=3000
 -   JWT_SECRET=supersecret_change_me
+-   ADMIN_EMAIL=admin@gmail.com
+-   ADMIN_PASSWORD=123
+-   ADMIN_NAME=Admin
+-   AUTO_OPEN_ADMIN=true
 
+**  So just after using npm start we create a super user (admin) with these informations:
+mail : admin@gmail.com  
+pass: 123

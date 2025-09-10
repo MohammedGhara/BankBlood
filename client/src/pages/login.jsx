@@ -22,8 +22,10 @@ export default function Login() {
 
      if (res.data.user.role === "admin") {
       nav("/admin/logs", { replace: true });
-    } else {
+    } else if (res.data.user.role === "doctor") {
       nav("/main", { replace: true });
+    }else if (res.data.user.role === "customer") {
+      nav("/research", { replace: true });
     }
     } catch (e) {
       const msg = e.response

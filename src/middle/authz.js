@@ -14,10 +14,11 @@ async function maybeAttachUser(req, _res, next) {
   next();
 }
 
-function requireRole(...roles) {
+function requireRole(roles) {
+  const allowed = Array.isArray(roles) ? roles : [roles];
   return (req, res, next) => {
-    const role = req.user?.role;
-    if (!role || !roles.includes(role)) return res.status(403).json({ error: 'Forbidden' });
+    if (!req.user) return res.status(401).json({ error: 'Unauthorized' });
+    if (!allowed.includes(req.user.role)) return res.status(403).json({ error: 'Forbidden' });
     next();
   };
 }

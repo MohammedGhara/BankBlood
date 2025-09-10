@@ -57,3 +57,82 @@
   display:flex; align-items:center; gap:10px;
   padding:10px; border-top:1px solid #2b2f36; margin-top:6px;
 }
+/* ---- Export cards ---- */
+.export-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.export-card {
+  background: #111827;           /* slate-900 */
+  border: 1px solid #1f2937;     /* slate-800 */
+  border-radius: 14px;
+  padding: 16px 18px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.20);
+  display: flex;
+  flex-direction: column;
+  min-height: 140px;
+}
+
+.export-title {
+  font-weight: 700;
+  color: #e5e7eb;                /* slate-200 */
+  margin-bottom: 4px;
+}
+
+.export-desc {
+  color: #94a3b8;                /* slate-400 */
+  margin: 0 0 12px;
+  line-height: 1.45;
+}
+
+.export-cta { margin-top: auto; display: flex; justify-content: flex-end; }
+
+.card-btn {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: auto !important;        /* override any global .btn width:100% */
+  padding: .45rem .8rem;
+  font-size: .9rem;
+  line-height: 1.1;
+  border-radius: 10px;
+  border: none;
+  background: #ef4444;           /* red-500 */
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+.card-btn:hover { filter: brightness(1.05); }
+
+@media (max-width: 900px) {
+  .export-cards { grid-template-columns: 1fr; }
+}
+/* --- Admin Logs: unstick the toolbar buttons --- */
+.logs-wrap .logs-toolbar,
+.logs-wrap .logs-toolbar.card,
+.logs-wrap .logs-toolbar .toolbar-buttons {
+  position: static !important;   /* cancel any fixed/sticky */
+  top: auto !important;
+  bottom: auto !important;
+  transform: none !important;
+  z-index: auto !important;
+}
+
+/* optional: make the two buttons sit side-by-side and not full width */
+.logs-wrap .logs-toolbar .toolbar-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.logs-wrap .logs-toolbar .toolbar-buttons .btn {
+  display: inline-flex !important;
+  width: auto !important;        /* stop width:100% from globals */
+  min-width: 0;
+  padding: .45rem .9rem;
+  border-radius: 10px;
+}

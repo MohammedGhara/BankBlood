@@ -10,6 +10,9 @@ import Donations from "./pages/Donations";
 import Dispense from "./pages/Dispense";
 import Emergency from "./pages/Emergency";
 import AdminLogs from "./pages/AdminLogs";
+import CustomerInventory from "./pages/CustomerInventory";
+import AdminUsers from "./pages/AdminUsers";
+
 
 export default function App() {
   return (
@@ -28,6 +31,10 @@ export default function App() {
           <Route path="/dispense" element={<Dispense />} />
           <Route path="/emergency" element={<Emergency />} />
           <Route path="/admin/logs" element={<AdminLogs />} />
+            <Route path="/admin/users" element={<AdminUsers />} />
+
+          <Route path="/research" element={<CustomerInventory />} />
+
         </Route>
 
         {/* 404 → Landing */}

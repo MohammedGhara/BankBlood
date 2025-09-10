@@ -1,7 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const Inventory = require('../models/inventory');
-
+const { requireRole } = require('../middle/authz');
+router.get('/summary', requireRole(['customer', 'doctor', 'admin']), async (_req, res) => {
+  const rows = await Inventory.findAll({
+    attributes: ['bloodType', 'units', 'updatedAt'],
+    order: [['bloodType', 'ASC']]
+  });
+  res.json(rows);
+});
 router.post('/', async (req, res) => {
   const { error, value } = CreateDonationDTO.validate(req.body, { stripUnknown: true });
   if (error) return res.status(400).json({ error: error.details.map(d => d.message) });

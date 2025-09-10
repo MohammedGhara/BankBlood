@@ -5,6 +5,7 @@ require('dotenv').config();
 
 const sequelize = require('./src/config/database');
 const { maybeAttachUser, requireRole } = require('./src/middle/authz');
+const { ensureAdminUser, openAdminPage } = require('./src/bootstrapAdmin'); // already here
 
 // register models once so Sequelize knows about them
 require('./src/models/donation');
@@ -18,6 +19,7 @@ const inventoryRoutes = require('./src/routes/inventory');
 const authRoutes      = require('./src/routes/auth');
 const issueRoutes     = require('./src/routes/issue');
 const emergencyRoutes = require('./src/routes/emergency');
+const adminUsersRoutes = require('./src/routes/admin.users');
 
 // swagger
 const swaggerUi = require('swagger-ui-express');
@@ -38,7 +40,6 @@ app.use(express.json());
 app.get('/health', (_req, res) => res.json({ ok: true }));
 
 // mount routes (no /api prefix per your frontend config)
-
 app.use('/auth', authRoutes);
 
 app.use(maybeAttachUser);
@@ -49,11 +50,13 @@ app.use('/inventory', inventoryRoutes);
 
 app.use('/issue', issueRoutes);
 app.use('/emergency', emergencyRoutes);
+app.use('/admin/users', requireRole('admin'), adminUsersRoutes);
 
 // swagger (optional — you can ignore this while testing in the browser)
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 const adminLogsRoutes = require('./src/routes/admin.logs');
 app.use('/admin/logs', requireRole('admin'), adminLogsRoutes);
+
 // init
 (async () => {
   // SQLite pragmas (safe defaults)
@@ -62,6 +65,9 @@ app.use('/admin/logs', requireRole('admin'), adminLogsRoutes);
 
   // sync models
   await sequelize.sync();
+
+  // 🔹 ADDED: ensure an admin user exists (from .env)
+  await ensureAdminUser();
 
   // ensure all blood types exist in inventory with 0 units
   const Inventory = require('./src/models/inventory');
@@ -73,5 +79,9 @@ app.use('/admin/logs', requireRole('admin'), adminLogsRoutes);
   app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
     console.log(`Swagger UI:   http://localhost:${port}/api-docs`);
+
+    // 🔹 ADDED: optionally open the admin page (controlled by AUTO_OPEN_ADMIN)
+    // (openAdminPage itself checks the env flag)
+    openAdminPage(port);
   });
 })();

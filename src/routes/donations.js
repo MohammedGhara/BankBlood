@@ -3,9 +3,10 @@ const router = express.Router();
 const Donation = require('../models/donation');
 const Inventory = require('../models/inventory');
 const { logEvent } = require('../lib/audit');
-
+const { requireRole } = require('../middle/authz');
 const { CreateDonationDTO, DonationResponseDTO } = require('../dtos/donation.dto');
 
+router.use(requireRole(['admin', 'doctor']));
 
 router.post('/', async (req, res) => {
   // validate input

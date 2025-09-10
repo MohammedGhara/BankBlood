@@ -1,5 +1,6 @@
+// client/src/components/Navbar.jsx
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { isLoggedIn, clearToken } from "../auth";
 import "../styles/navbar.css";
 
@@ -19,6 +20,15 @@ export default function Navbar() {
     };
   }, []);
 
+  // read the current user (saved by your login flow)
+  const user = useMemo(() => {
+    try {
+      return JSON.parse(localStorage.getItem("user"));
+    } catch {
+      return null;
+    }
+  }, [logged, loc.key]);
+
   function logout() {
     clearToken();
     nav("/");
@@ -33,21 +43,52 @@ export default function Navbar() {
         {/* Links right */}
         <nav className="nb-links">
           <Link
-            className={`nb-link ${
-              loc.pathname === (logged ? "/main" : "/") ? "active" : ""
-            }`}
+            className={`nb-link ${loc.pathname === (logged ? "/main" : "/") ? "active" : ""}`}
             to={logged ? "/main" : "/"}
           >
             Home
           </Link>
-          {logged ? (
+
+          {/* Customer (research student) */}
+          {logged && user?.role === "customer" && (
+            <Link
+              className={`nb-link ${loc.pathname === "/research" ? "active" : ""}`}
+              to="/research"
+            >
+              Research
+            </Link>
+          )}
+
+          {/* Admin-only links */}
+          {logged && user?.role === "admin" && (
             <>
-              <button className="nb-btn" onClick={logout}>Logout</button>
+              <Link
+                className={`nb-link ${loc.pathname.startsWith("/admin/logs") ? "active" : ""}`}
+                to="/admin/logs"
+              >
+                Logs
+              </Link>
+
+              {/* The new admin Users button/link */}
+              <Link
+                className={`nb-link nb-cta ${loc.pathname.startsWith("/admin/users") ? "active" : ""}`}
+                to="/admin/users"
+              >
+                Users
+              </Link>
             </>
+          )}
+
+          {logged ? (
+            <button className="nb-btn" onClick={logout}>Logout</button>
           ) : (
             <>
-              <Link className={`nb-link ${loc.pathname === "/login" ? "active" : ""}`} to="/login">Login</Link>
-              <Link className={`nb-link nb-cta ${loc.pathname === "/register" ? "active" : ""}`} to="/register">Sign up</Link>
+              <Link className={`nb-link ${loc.pathname === "/login" ? "active" : ""}`} to="/login">
+                Login
+              </Link>
+              <Link className={`nb-link nb-cta ${loc.pathname === "/register" ? "active" : ""}`} to="/register">
+                Sign up
+              </Link>
             </>
           )}
         </nav>
