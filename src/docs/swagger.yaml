@@ -1,0 +1,138 @@
+openapi: 3.0.0
+info:
+  title: BECS Blood Bank API
+  version: "1.0"
+servers:
+  - url: http://localhost:3000
+
+tags:
+  - name: Donations
+  - name: Inventory
+
+paths:
+  /donations:
+    post:
+      tags: [Donations]
+      summary: Record a new blood donation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDonation'
+            example:
+              donorId: "123456789"
+              donorName: "John Doe"
+              bloodType: "O-"
+              donatedAt: "2025-08-11T15:00:00Z"
+      responses:
+        "201":
+          description: Donation recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Donation'
+        "400":
+          description: Validation error
+        "500":
+          description: Internal server error
+
+  /inventory:
+    get:
+      tags: [Inventory]
+      summary: List current stock
+      responses:
+        "200":
+          description: Inventory list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InventoryItem'
+        "500":
+          description: Internal server error
+  /auth/register:
+    post:
+      summary: Register new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [fullName, email, password]
+              properties:
+                fullName: { type: string, example: "Dr. Sarah" }
+                email:    { type: string, example: "sarah@example.com" }
+                password: { type: string, example: "P@ssw0rd!" }
+                role:     { type: string, enum: [admin, Doctor, Customer], example: "Customer" }
+      responses:
+        "201": { description: created }
+
+  /auth/login:
+    post:
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:    { type: string, example: "sarah@example.com" }
+                password: { type: string, example: "P@ssw0rd!" }
+      responses:
+        "200": { description: ok }
+        "401": { description: invalid credentials }
+components:
+  schemas:
+    CreateDonation:
+      type: object
+      required: [donorId, donorName, bloodType, donatedAt]
+      properties:
+        donorId:
+          type: string
+          example: "123456789"
+        donorName:
+          type: string
+          example: "John Doe"
+        bloodType:
+          type: string
+          enum: [A+, A-, B+, B-, AB+, AB-, O+, O-]
+        donatedAt:
+          type: string
+          format: date-time
+
+    Donation:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        donorId:
+          type: string
+          example: "123456789"
+        donorName:
+          type: string
+          example: "John Doe"
+        bloodType:
+          type: string
+          enum: [A+, A-, B+, B-, AB+, AB-, O+, O-]
+          example: "O-"
+        donatedAt:
+          type: string
+          format: date-time
+          example: "2025-08-11T15:00:00Z"
+
+    InventoryItem:
+      type: object
+      properties:
+        bloodType:
+          type: string
+          enum: [A+, A-, B+, B-, AB+, AB-, O+, O-]
+          example: "O-"
+        units:
+          type: integer
+          example: 7

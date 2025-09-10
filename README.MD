@@ -1,0 +1,42 @@
+# BankBlood
+
+A blood donation management web app (Node.js/Express + React) with inventory, issues/emergencies, and stats.
+
+## Quick Start
+
+### 1) Backend
+```bash
+cd BankBlood  # adjust if your server folder name differs
+npm install
+cp .env.example .env    # if you have one; otherwise create .env (see below)
+npm run dev             # or: npm start
+```
+
+**Environment variables (.env):**
+```
+PORT=4000
+DB_DIALECT=sqlite
+DB_STORAGE=./bloodbank.sqlite
+JWT_SECRET=change_me
+```
+
+### 2) Frontend
+```bash
+cd client
+npm install
+npm run dev
+```
+
+## Scripts
+- Server: `npm run dev` (nodemon) or `npm start`
+- Client: `npm run dev`
+
+## Project Structure (simplified)
+- `BankBlood/` – Node.js/Express API (routes: auth, donation, issue, emergency, stats, etc.)
+- `client/` – React front‑end (login/register, dashboards)
+- `bloodbank.sqlite` – local SQLite database (ignored by git)
+
+## Deployment Notes
+- Never commit `.env` or `*.sqlite` to GitHub.
+- Set environment variables on your hosting (Render/Heroku/Vercel/Netlify).
+- Use a persistent database (e.g., PostgreSQL) for production.
