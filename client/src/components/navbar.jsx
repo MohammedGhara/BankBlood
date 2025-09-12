@@ -1,17 +1,21 @@
 // client/src/components/Navbar.jsx
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useEffect, useMemo, useState } from "react";
-import { isLoggedIn, clearToken } from "../auth";
+import { useEffect, useState, useMemo } from "react";
+import { isLoggedIn, clearToken, getUser } from "../auth";
 import "../styles/navbar.css";
 
 export default function Navbar() {
   const [logged, setLogged] = useState(isLoggedIn());
+  const [user, setUser] = useState(getUser());
   const nav = useNavigate();
   const loc = useLocation();
 
   // react to login/logout from anywhere
   useEffect(() => {
-    const onChange = () => setLogged(isLoggedIn());
+    const onChange = () => {
+      setLogged(isLoggedIn());
+      setUser(getUser());
+    };
     window.addEventListener("auth-changed", onChange);
     window.addEventListener("storage", onChange);
     return () => {
@@ -20,14 +24,11 @@ export default function Navbar() {
     };
   }, []);
 
-  // read the current user (saved by your login flow)
-  const user = useMemo(() => {
-    try {
-      return JSON.parse(localStorage.getItem("user"));
-    } catch {
-      return null;
-    }
-  }, [logged, loc.key]);
+  // role-based Home target
+  const homePath = useMemo(() => {
+    if (!logged) return "/";
+    return user?.role === "customer" ? "/research" : "/main";
+  }, [logged, user]);
 
   function logout() {
     clearToken();
@@ -42,9 +43,10 @@ export default function Navbar() {
 
         {/* Links right */}
         <nav className="nb-links">
+          {/* HOME (role-aware) */}
           <Link
-            className={`nb-link ${loc.pathname === (logged ? "/main" : "/") ? "active" : ""}`}
-            to={logged ? "/main" : "/"}
+            className={`nb-link ${loc.pathname === homePath ? "active" : ""}`}
+            to={homePath}
           >
             Home
           </Link>
@@ -68,8 +70,6 @@ export default function Navbar() {
               >
                 Logs
               </Link>
-
-              {/* The new admin Users button/link */}
               <Link
                 className={`nb-link nb-cta ${loc.pathname.startsWith("/admin/users") ? "active" : ""}`}
                 to="/admin/users"
